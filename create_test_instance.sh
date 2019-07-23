@@ -9,7 +9,7 @@ case $1 in
         image=centos7_with_irods_42
         ;;
     *)
-        echo "First arg must be centos|centos7|ubuntu|ubuntu16, others coming soon..."
+        echo "First arg must be centos|centos7|ubuntu|ubuntu14|ubuntu16."
         exit 1
         ;;
 esac
