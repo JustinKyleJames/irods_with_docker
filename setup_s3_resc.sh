@@ -1,0 +1,1 @@
+iadmin mkresc amazons3resc s3 `hostname`:/justinkylejames-irods1/amazons3resc "S3_DEFAULT_HOSTNAME=s3.amazonaws.com;S3_AUTH_FILE=/var/lib/irods/amazon.keypair;S3_REGIONNAME=us-east-1;S3_RETRY_COUNT=2;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTP;HOST_MODE=cacheless_attached;S3_ENABLE_MD5=1;S3_SIGNATURE_VERSION=2;S3_ENABLE_MPU=1;S3_MPU_THREADS=30;S3_MPU_CHUNK=256"

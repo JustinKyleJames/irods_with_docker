@@ -1,0 +1,33 @@
+FROM centos:7
+
+# get things needed
+RUN yum install -y wget python-psutil python-jsonschema epel-release python-devel gcc openssl-devel curl-devel libxml2-devel rpm-build 
+RUN yum install -y python-pip
+
+# install and configure postgres
+ADD db_commands.txt /
+RUN yum install -y postgresql-server postgresql-contrib
+RUN su - postgres -c "pg_ctl initdb"
+RUN su - postgres -c "/usr/bin/pg_ctl -D /var/lib/pgsql/data -l logfile start && sleep 1 && psql -f /db_commands.txt"
+
+# Install irods irods-externals packages.
+RUN rpm --import https://packages.irods.org/irods-signing-key.asc
+RUN wget -qO - https://packages.irods.org/renci-irods.yum.repo | tee /etc/yum.repos.d/renci-irods.yum.repo
+RUN yum update -y
+RUN yum install -y irods-externals* irods-server irods-database-plugin-postgres irods-devel
+
+ADD start.centos.sh /
+RUN chmod u+x /start.centos.sh
+
+ADD setup_s3_resc.sh /
+ADD cleanup.sh /
+
+ADD amazon.keypair /var/lib/irods
+RUN mkdir -p /projects/irods/vsphere-testing/externals
+ADD amazon.keypair /projects/irods/vsphere-testing/externals/amazon_web_services-CI.keypair
+
+ADD irods-resource-plugin-s3-2.6.0-1.x86_64.rpm /
+
+RUN pip install minio
+
+ENTRYPOINT "/start.centos.sh" 
