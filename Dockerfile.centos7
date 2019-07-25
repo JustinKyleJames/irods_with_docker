@@ -3,6 +3,7 @@ FROM centos:7
 # get things needed
 RUN yum install -y wget python-psutil python-jsonschema epel-release python-devel gcc openssl-devel curl-devel libxml2-devel rpm-build 
 RUN yum install -y python-pip
+RUN yum install -y vim sudo tig git
 
 # install and configure postgres
 ADD db_commands.txt /
@@ -29,5 +30,12 @@ ADD amazon.keypair /projects/irods/vsphere-testing/externals/amazon_web_services
 ADD irods-resource-plugin-s3-2.6.0-1.x86_64.rpm /
 
 RUN pip install minio
+RUN pip install --upgrade urllib3
+
+ARG plugin_repo
+ENV PLUGIN_REPO ${plugin_repo}
+
+ARG plugin_branch
+ENV PLUGIN_BRANCH ${plugin_branch}
 
 ENTRYPOINT "/start.centos.sh" 

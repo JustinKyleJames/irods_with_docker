@@ -8,6 +8,8 @@ RUN apt-get update && \
                        python python-psutil python-requests python-jsonschema \
                        libssl-dev super lsof postgresql odbc-postgresql libjson-perl
 
+RUN apt-get install -y vim sudo
+
 
 RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key add -
 RUN echo "deb [arch=amd64] https://packages.irods.org/apt/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/renci-irods.list
@@ -36,6 +38,12 @@ ADD setup_s3_resc.sh /
 RUN apt-get install -y python-pip
 RUN pip install minio
 RUN pip install --upgrade urllib3
+
+ARG plugin_repo
+ENV PLUGIN_REPO ${plugin_repo}
+
+ARG plugin_branch
+ENV PLUGIN_BRANCH ${plugin_branch}
 
 ENTRYPOINT "/start.ubuntu.sh" 
 

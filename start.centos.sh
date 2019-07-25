@@ -30,7 +30,23 @@ chmod u+x /var/lib/irods/cleanup.sh
 cp /amazon.keypair /var/lib/irods
 chown irods:irods /var/lib/irods/amazon.keypair
 
-rpm -i irods-resource-plugin-s3-2.6.0-1.x86_64.rpm
+#rpm -i irods-resource-plugin-s3-2.6.0-1.x86_64.rpm
+
+if [ ! -z "$PLUGIN_REPO" ]; then
+    repo_name=`echo $PLUGIN_REPO | sed 's|.*/||'`
+    git clone $PLUGIN_REPO
+    cd $repo_name
+    if [ ! -z "$PLUGIN_BRANCH" ]; then
+        git checkout $PLUGIN_BRANCH
+    fi
+    mkdir bld
+    cd bld
+    /opt/irods-externals/cmake3.11.4-0/bin/cmake ..
+    make -j5 package
+    rpm --force -i *.rpm
+fi
+
+cd /
 
 # Keep container running
 exec /usr/sbin/init

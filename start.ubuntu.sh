@@ -24,7 +24,23 @@ chmod u+x /var/lib/irods/cleanup.sh
 cp /amazon.keypair /var/lib/irods
 chown irods:irods /var/lib/irods/amazon.keypair
 
-dpkg -i /irods-resource-plugin-s3*.deb
+#dpkg -i /irods-resource-plugin-s3*.deb
+
+if [ ! -z "$PLUGIN_REPO" ]; then
+    repo_name=`echo $PLUGIN_REPO | sed 's|.*/||'`
+    git clone $PLUGIN_REPO
+    cd $repo_name
+    if [ ! -z "$PLUGIN_BRANCH" ]; then
+        git checkout $PLUGIN_BRANCH
+    fi
+    mkdir bld
+    cd bld
+    /opt/irods-externals/cmake3.11.4-0/bin/cmake ..
+    make -j5 package
+    dpkg -i *.deb
+fi
+
+cd /
 
 # Keep container running if the test fails.
 tail -f /dev/null
