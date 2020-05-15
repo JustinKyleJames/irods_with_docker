@@ -5,6 +5,9 @@ case $1 in
     ubuntu14 )
         image=ubuntu_14_with_irods_42
         ;;
+    ubuntu18 )
+        image=ubuntu_18_with_irods_42
+        ;;
     centos | centos7 )
         image=centos7_with_irods_42
         ;;
