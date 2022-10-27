@@ -1,5 +1,6 @@
 #! /bin/bash
 
+# Start the Postgres database.
 if [ ! -d /run/postgresql ]; then
 
     mkdir /run/postgresql
@@ -16,8 +17,25 @@ done
 
 echo Postgres took approximately $counter seconds to fully start ...
 
-# Set up iRODS.
+#### Set up iRODS ####
 python /var/lib/irods/scripts/setup_irods.py < /var/lib/irods/packaging/localhost_setup_postgres.input
+
+#### Start iRODS ####
+su - irods -c '/var/lib/irods/irodsctl start'
+
+#### Create user1 in iRODS ####
+sudo -H -u irods bash -c "iadmin mkuser user1 rodsuser"
+sudo -H -u irods bash -c "iadmin moduser user1 password user1"
+
+#### Give root an environment to connect to iRODS ####
+echo 'localhost
+1247
+rods
+tempZone
+rods' | iinit
+
+#### Add user1 as a local user for testing ####
+useradd user1 -m
 
 cp /setup_s3_resc.sh /var/lib/irods/setup_s3_resc.sh
 chown irods:irods /var/lib/irods/setup_s3_resc.sh
@@ -27,27 +45,12 @@ cp /cleanup.sh /var/lib/irods/cleanup.sh
 chown irods:irods /var/lib/irods/cleanup.sh
 chmod u+x /var/lib/irods/cleanup.sh
 
-cp /amazon.keypair /var/lib/irods
+mkdir -p /projects/irods/vsphere-testing/externals/
+cp /amazon.keypair /projects/irods/vsphere-testing/externals/amazon_web_services-CI.keypair
+cp /amazon.keypair /var/lib/irods/amazon.keypair
 chown irods:irods /var/lib/irods/amazon.keypair
-
-#rpm -i irods-resource-plugin-s3-2.6.0-1.x86_64.rpm
-
-if [ ! -z "$PLUGIN_REPO" ]; then
-    repo_name=`echo $PLUGIN_REPO | sed 's|.*/||'`
-    git clone $PLUGIN_REPO
-    cd $repo_name
-    if [ ! -z "$PLUGIN_BRANCH" ]; then
-        git checkout $PLUGIN_BRANCH
-    fi
-    mkdir bld
-    cd bld
-    /opt/irods-externals/cmake3.11.4-0/bin/cmake ..
-    make -j5 package
-    rpm --force -i *.rpm
-fi
 
 cd /
 
-# Keep container running
-exec /usr/sbin/init
-
+#### Keep container running ####
+tail -f /dev/null

@@ -2,7 +2,7 @@ set -x
 
 iadmin modresc demoResc host `hostname`
 
-users='issue_3104_user otherrods alice bobby issue_3620_user tmpuser'
+users='issue_3104_user otherrods alice bobby issue_3620_user tmpuser irodsauthuser'
 
 for user in $users; do
     ichmod -M -r own rods /tempZone/home/${user}

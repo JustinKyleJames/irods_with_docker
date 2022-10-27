@@ -2,13 +2,13 @@
 
 usage() {
 cat <<_EOF_
-Usage: ./build_image.sh [OPTIONS]...
+Usage: ./build_image_with_globus.sh [OPTIONS]...
 
-Builds a new docker image with irods
+Builds a new docker image with globus installed and configured
 
 Example:
 
-    ./build_image.sh --os_type <arg> --irods-version <arg> ...
+    ./build_image_with_globus.sh --os_type <arg> --irods-version <arg> ...
 
 Available options:
 
@@ -20,25 +20,30 @@ _EOF_
     exit
 }
 
+# TODO rename to *.Dockerfile
+
 while [ -n "$1" ]; do
     case "$1" in
         --os_type )
             shift
             case "$1" in
                 ubuntu | ubuntu18 )
-                    dockerfile=ubuntu18.Dockerfile
-                    image=ubuntu_18_with_irods
+                    dockerfile=globus.ubuntu18.Dockerfile
+                    image=ubuntu_18_with_globus_irods
                     version_extension="-1~bionic"
+                    globus_package_version_extension="-1"
                     ;;
                 ubuntu20 )
-                    dockerfile=ubuntu20.Dockerfile
-                    image=ubuntu_20_with_irods
+                    dockerfile=globus.ubuntu20.Dockerfile
+                    image=ubuntu_20_with_globus_irods
                     version_extension="-1~focal"
+                    globus_package_version_extension="-1"
                     ;;
                 centos | centos7 )
-                    dockerfile=centos7.Dockerfile
-                    image=centos7_with_irods
+                    dockerfile=globus.centos7.Dockerfile
+                    image=centos7_with_globus_irods
                     version_extension="-1"
+                    globus_package_version_extension="-1"
                     ;;
                 * )
                     usage

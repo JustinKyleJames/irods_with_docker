@@ -2,13 +2,13 @@
 
 usage() {
 cat <<_EOF_
-Usage: ./create+test_instance.sh [OPTIONS]...
+Usage: ./create+test_instance_globus.sh [OPTIONS]...
 
-Builds a new docker image with irods installed and configured
+Builds a new docker image with globus installed and configured
 
 Example:
 
-    ./create_test_instance.sh --os_type <arg> --irods-version <arg> ...
+    ./create_test_instance_globus.sh --os_type <arg> --irods-version <arg> ...
 
 Available options:
 
@@ -27,13 +27,13 @@ while [ -n "$1" ]; do
             shift
             case "$1" in
                 ubuntu | ubuntu18 )
-                    image=ubuntu_18_with_irods
+                    image=ubuntu_18_with_globus_irods
                     ;;
                 ubuntu20 )
-                    image=ubuntu_20_with_irods
+                    image=ubuntu_20_with_globus_irods
                     ;;
                 centos | centos7 )
-                    image=centos7_with_irods
+                    image=centos7_with_globus_irods
                     ;;
                 * )
                     usage
