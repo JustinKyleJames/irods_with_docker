@@ -2,7 +2,7 @@
 
 usage() {
 cat <<_EOF_
-Usage: ./create+test_instance.sh [OPTIONS]...
+Usage: ./create_test_instance.sh [OPTIONS]...
 
 Builds a new docker image with irods installed and configured
 
@@ -13,7 +13,7 @@ Example:
 Available options:
 
     --os_type (required)                    The OS type.  One of centos|centos7|ubuntu|ubuntu14|ubuntu16.
-    -- irods-version                        The version of irods - example 4.2.11, 4.3, etc.
+    --irods-version                        The version of irods - example 4.2.11, 4.3.0, etc.
     -h, --help                              This message
 
 _EOF_

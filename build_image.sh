@@ -13,7 +13,7 @@ Example:
 Available options:
 
     --os_type (required)                    The OS type.  One of centos|centos7|ubuntu|ubuntu14|ubuntu16.
-    --irods-version                         The version of irods - example 4.2.11, 4.3, etc.
+    --irods-version                         The version of irods - example 4.2.11, 4.3.0, etc.
     -h, --help                              This message
 
 _EOF_
@@ -26,6 +26,7 @@ while [ -n "$1" ]; do
             shift
             case "$1" in
                 ubuntu | ubuntu18 )
+                    echo "os_type is " $1
                     dockerfile=ubuntu18.Dockerfile
                     image=ubuntu_18_with_irods
                     version_extension="-1~bionic"
