@@ -18,7 +18,12 @@ done
 echo Postgres took approximately $counter seconds to fully start ...
 
 #### Set up iRODS ####
-python /var/lib/irods/scripts/setup_irods.py < /var/lib/irods/packaging/localhost_setup_postgres.input
+irods_version=`rpm -qa irods-server`
+if [[ $irods_version == "irods-server-4.3"* ]]; then
+    python3 /var/lib/irods/scripts/setup_irods.py < /var/lib/irods/packaging/localhost_setup_postgres.input
+else
+    python /var/lib/irods/scripts/setup_irods.py < /var/lib/irods/packaging/localhost_setup_postgres.input
+fi
 
 #### Start iRODS ####
 su - irods -c '/var/lib/irods/irodsctl start'
