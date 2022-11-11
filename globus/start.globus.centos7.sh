@@ -63,7 +63,8 @@ echo "\"$subject\" rods" | sudo tee -a /etc/grid-security/grid-mapfile
 useradd user1 -m
 
 #### Set up /etc/gridftp.conf also allowing user1 to user anonymous ftp ####
-echo '$LD_LIBRARY_PATH "$LD_LIBRARY_PATH:/iRODS_DSI"
+echo 'port 2811
+$LD_LIBRARY_PATH "$LD_LIBRARY_PATH:/iRODS_DSI"
 $irodsConnectAsAdmin "rods"
 load_dsi_module iRODS
 auth_level 4

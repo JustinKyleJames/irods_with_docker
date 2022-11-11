@@ -11,7 +11,12 @@ done
 echo Postgres took approximately $counter seconds to fully start ...
 
 #### Set up iRODS ####
-python /var/lib/irods/scripts/setup_irods.py < /var/lib/irods/packaging/localhost_setup_postgres.input
+irods_version=`apt show irods-server 2>/dev/null | grep Version`
+if [[ $irods_version == "Version: 4.3"* ]]; then
+    python3 /var/lib/irods/scripts/setup_irods.py < /var/lib/irods/packaging/localhost_setup_postgres.input
+else
+    python /var/lib/irods/scripts/setup_irods.py < /var/lib/irods/packaging/localhost_setup_postgres.input
+fi
 
 #### Start iRODS ####
 service irods start
@@ -56,7 +61,8 @@ echo "\"$subject\" rods" | sudo tee -a /etc/grid-security/grid-mapfile
 useradd user1 -m
 
 #### Set up /etc/gridftp.conf also allowing user1 to user anonymous ftp ####
-echo '$LD_LIBRARY_PATH "$LD_LIBRARY_PATH:/iRODS_DSI"
+echo 'port 2811
+$LD_LIBRARY_PATH "$LD_LIBRARY_PATH:/iRODS_DSI"
 $irodsConnectAsAdmin "rods"
 load_dsi_module iRODS
 auth_level 4
