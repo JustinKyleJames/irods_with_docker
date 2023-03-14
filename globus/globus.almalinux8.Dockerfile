@@ -61,11 +61,13 @@ RUN rpm --force -i globus-repo-latest.noarch.rpm
 RUN yum install -y globus-gridftp-server-progs \
     globus-simple-ca \
     globus-gass-copy-progs \
-    globus-common-devel \
-    globus-gridftp-server-devel \
-    globus-gridmap-callout-error-devel \
     globus-gsi-cert-utils-progs \
     globus-proxy-utils
+
+RUN yum --disablerepo epel install -y globus-common-devel \
+    globus-gridftp-server-devel \
+    globus-gridmap-callout-error-devel
+
 
 RUN mkdir /iRODS_DSI
 RUN chmod 777 /iRODS_DSI
