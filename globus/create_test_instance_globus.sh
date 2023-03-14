@@ -35,6 +35,9 @@ while [ -n "$1" ]; do
                 centos | centos7 )
                     image=centos7_with_globus_irods
                     ;;
+                alma | alma8 | almalinux8 )
+                    image=almalinux8_with_globus_irods
+                    ;;
                 * )
                     usage
                     ;;

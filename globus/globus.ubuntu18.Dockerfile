@@ -56,7 +56,7 @@ RUN apt-get install -y irods-server=${irods_version} irods-dev=${irods_version} 
 RUN apt-get install -y 'irods-externals*'
 
 #### Install irods-gridftp-client ####
-RUN apt-get install -y irods-gridftp-client
+#RUN apt-get install -y irods-gridftp-client
 
 #### Set up ICAT database. ####
 ADD db_commands.txt /

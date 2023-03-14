@@ -45,6 +45,12 @@ while [ -n "$1" ]; do
                     version_extension="-1"
                     globus_package_version_extension="-1"
                     ;;
+                alma | alma8 | almalinux8 )
+                    dockerfile=globus.almalinux8.Dockerfile
+                    image=almalinux8_with_globus_irods
+                    version_extension="-1"
+                    globus_package_version_extension="-1"
+                    ;;
                 * )
                     usage
                     ;;
