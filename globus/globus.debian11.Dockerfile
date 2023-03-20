@@ -1,7 +1,7 @@
-FROM ubuntu:20.04
+FROM debian:11
 
-ADD start.globus.ubuntu20.sh /
-RUN chmod u+x /start.globus.ubuntu20.sh
+ADD start.globus.debian11.sh /
+RUN chmod u+x /start.globus.debian11.sh
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=true
@@ -9,7 +9,8 @@ ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=true
 #### install basic packages ####
 RUN apt-get update && \
     apt-get install -y apt-utils apt-transport-https unixodbc unixodbc-dev wget lsb-release sudo \
-                       python python-psutil \
+                       python \
+                       #python-psutil \
                        #python-requests python-jsonschema \
                        libssl-dev super lsof postgresql odbc-postgresql libjson-perl gnupg \
                        vim sudo rsyslog g++ dpkg-dev cdbs libcurl4-openssl-dev \
@@ -63,5 +64,5 @@ RUN apt-get install -y 'irods-externals*'
 ADD db_commands.txt /
 RUN service postgresql start && su - postgres -c 'psql -f /db_commands.txt'
 
-ENTRYPOINT "/start.globus.ubuntu20.sh"
+ENTRYPOINT "/start.globus.debian11.sh"
 

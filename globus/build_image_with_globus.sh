@@ -39,6 +39,12 @@ while [ -n "$1" ]; do
                     version_extension="-1~focal"
                     globus_package_version_extension="-1"
                     ;;
+                debian11 )
+                    dockerfile=globus.debian11.Dockerfile
+                    image=debian_11_with_globus_irods
+                    version_extension="-1~bullseye"
+                    globus_package_version_extension="-1"
+                    ;;
                 centos | centos7 )
                     dockerfile=globus.centos7.Dockerfile
                     image=centos7_with_globus_irods

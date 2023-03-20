@@ -32,6 +32,9 @@ while [ -n "$1" ]; do
                 ubuntu20 )
                     image=ubuntu_20_with_globus_irods
                     ;;
+                debian11 )
+                    image=debian_11_with_globus_irods
+                    ;;
                 centos | centos7 )
                     image=centos7_with_globus_irods
                     ;;
