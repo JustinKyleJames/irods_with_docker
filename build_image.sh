@@ -68,7 +68,7 @@ if [ -z "${irods_version}" ]; then
 fi
 
 case "$irods_version" in
-    4.2.8 | 4.2.9 | 4.2.10 )
+    4.2.8 | 4.2.9 | 4.2.10 | 4.2.11 | 4.2.12 )
         irods_repo_version=$irods_version
         ;;
     4.2.11 | 4.3.0 )

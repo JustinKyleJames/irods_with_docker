@@ -7,11 +7,18 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=true
 
 #### install basic packages ####
+
+# For Postgres 14
+RUN apt-get update && apt-get install -y wget lsb-release gnupg gnupg2 gnupg1 
+RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+
 RUN apt-get update && \
     apt-get install -y apt-utils apt-transport-https unixodbc unixodbc-dev wget lsb-release sudo \
                        python python-psutil \
                        #python-requests python-jsonschema \
-                       libssl-dev super lsof postgresql odbc-postgresql libjson-perl gnupg \
+                       postgresql-14 \
+                       libssl-dev super lsof libjson-perl gnupg \
                        vim sudo rsyslog g++ dpkg-dev cdbs libcurl4-openssl-dev \
                        tig git libpam0g-dev libkrb5-dev libfuse-dev \
                        libbz2-dev libxml2-dev zlib1g-dev python-dev \

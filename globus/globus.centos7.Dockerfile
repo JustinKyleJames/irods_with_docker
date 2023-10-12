@@ -18,6 +18,7 @@ RUN \
     diffutils \
     procps \
     rpm-build \
+    pam-devel \
   && \
   yum clean all && \
   rm -rf /var/cache/yum /tmp/*

@@ -61,8 +61,8 @@ cp hostcert.pem /etc/grid-security/hostcert.pem
 cp hostcert.pem ~/.globus/usercert.pem
 
 #### Set up grid-mapfile ####
-subject=`openssl x509 -noout -in /etc/grid-security/hostcert.pem -subject | cut -d'=' -f2- | sed -e 's|,|/|g' | sed -e 's| ||g'`
-echo "\"$subject\" rods" | sudo tee -a /etc/grid-security/grid-mapfile
+subject=`openssl x509 -noout -in /etc/grid-security/hostcert.pem -subject | cut -d'=' -f2- | sed -e 's|,|/|g' | sed -e 's|/ |/|g' | sed -e 's/ = /=/g'`
+echo "\"\\$subject\" rods" | sudo tee -a /etc/grid-security/grid-mapfile
 
 #### Add user1 as a local user for testing ####
 useradd user1 -m

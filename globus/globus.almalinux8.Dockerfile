@@ -3,6 +3,8 @@ FROM almalinux:8
 RUN \
   yum update -y && \
   yum install -y \
+    pam-devel \
+    python3-jsonschema \
     authd \
     epel-release \
     gcc-c++ \

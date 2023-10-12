@@ -12,7 +12,7 @@ Example:
 
 Available options:
 
-    --os_type (required)                    The OS type.  One of centos|centos7|ubuntu|ubuntu14|ubuntu16.
+    --os_type (required)                    The OS type.  One of centos|centos7|ubuntu|ubuntu18|ubuntu28|alma|alma8|almalinux8
     -- irods-version                        The version of irods - example 4.2.11, 4.3, etc.
     -h, --help                              This message
 
