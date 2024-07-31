@@ -71,6 +71,12 @@ useradd user1 -m
 echo 'port 2811
 $LD_LIBRARY_PATH "$LD_LIBRARY_PATH:/iRODS_DSI"
 $irodsConnectAsAdmin "rods"
+$spOption irods_client_globus_connector
+$numberOfIrodsReadWriteThreads 3
+$irodsParallelFileSizeThresholdBytes 33554432
+$spOption irods_client_globus_connector
+$irodsResourceMap "/etc/resource_mapfile"
+
 load_dsi_module iRODS
 auth_level 4
 
@@ -78,6 +84,10 @@ allow_anonymous 1
 anonymous_names_allowed user1
 anonymous_user user1
 ' | tee -a /etc/gridftp.conf
+
+#### Create a resource_mapfile ####
+echo '/tempZone/home/rods/dir1;resc1
+/tempZone/home/rods/dir2;resc2' > /etc/resource_mapfile
 
 #### Start gridftp server ####
 /usr/sbin/globus-gridftp-server -allow-root -log-module stdio:buffer=0 -threads 1 -aa -c /etc/gridftp.conf -pidfile /var/run/globus-gridftp-server.pid -log-level trace,info,warn,error -logfile /var/log/gridftp.log -no-detach -config-base-path / &

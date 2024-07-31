@@ -8,11 +8,11 @@ Builds a new docker image with irods
 
 Example:
 
-    ./build_image.sh --os_type <arg> --irods-version <arg> ...
+    ./build_image.sh --os-type <arg> --irods-version <arg> ...
 
 Available options:
 
-    --os_type (required)                    The OS type.  One of centos|centos7|ubuntu|ubuntu14|ubuntu16.
+    --os-type (required)                    The OS type.  One of centos|centos7|ubuntu|ubuntu14|ubuntu16.
     --irods-version                         The version of irods - example 4.2.11, 4.3.0, etc.
     -h, --help                              This message
 
@@ -22,19 +22,24 @@ _EOF_
 
 while [ -n "$1" ]; do
     case "$1" in
-        --os_type )
+        --os-type )
             shift
             case "$1" in
                 ubuntu | ubuntu18 )
-                    echo "os_type is " $1
+                    echo "os-type is " $1
                     dockerfile=ubuntu18.Dockerfile
                     image=ubuntu_18_with_irods
-                    version_extension="-1~bionic"
+                    version_extension="~bionic"
                     ;;
                 ubuntu20 )
                     dockerfile=ubuntu20.Dockerfile
                     image=ubuntu_20_with_irods
-                    version_extension="-1~focal"
+                    version_extension="~focal"
+                    ;;
+                ubuntu22 )
+                    dockerfile=ubuntu22.Dockerfile
+                    image=ubuntu_22_with_irods
+                    version_extension="~jammy"
                     ;;
                 centos | centos7 )
                     dockerfile=centos7.Dockerfile
@@ -64,15 +69,21 @@ if [ -z "$dockerfile" ]; then
 fi
 
 if [ -z "${irods_version}" ]; then
-    irods_version="4.3.0"
+    irods_version="4.3.2"
 fi
 
 case "$irods_version" in
-    4.2.8 | 4.2.9 | 4.2.10 | 4.2.11 | 4.2.12 )
+    4.2.8 | 4.2.9 | 4.2.10 )
         irods_repo_version=$irods_version
         ;;
-    4.2.11 | 4.3.0 )
-        irods_repo_version=${irods_version}${version_extension}
+    4.2.11 | 4.2.12 | 4.3.0 )
+        irods_repo_version=${irods_version}-1${version_extension}
+        ;;
+    4.3.1 )
+        irods_repo_version=${irods_version}-0${version_extension}
+        ;;
+    4.3.2 )
+        irods_repo_version=${irods_version}-0${version_extension}
         ;;
     * )
         usage

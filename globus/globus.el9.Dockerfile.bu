@@ -1,33 +1,10 @@
-FROM centos:7
+FROM rockylinux:9
 
-RUN --mount=type=cache,target=/var/cache/yum,sharing=locked \
-    sed -i \
-        -e 's/mirror.centos.org/vault.centos.org/g' \
-        -e 's/^#.*baseurl=http/baseurl=http/g' \
-        -e 's/^mirrorlist=http/#mirrorlist=http/g' \
-        /etc/yum.repos.d/*.repo && \
-    yum update -y || [ "$?" -eq 100 ] && \
-    rm -rf /tmp/*
-
-RUN --mount=type=cache,target=/var/cache/yum,sharing=locked \
-    yum install -y \
-        centos-release-scl \
-        epel-release \
-    && \
-    sed -i \
-        -e 's/mirror.centos.org/vault.centos.org/g' \
-        -e 's/^#.*baseurl=http/baseurl=http/g' \
-        -e 's/^mirrorlist=http/#mirrorlist=http/g' \
-        /etc/yum.repos.d/*.repo 
-
-RUN --mount=type=cache,target=/var/cache/yum,sharing=locked \
-    rpm --import https://www.cert.org/forensics/repository/forensics-expires-2022-04-03.asc && \
-    yum install -y https://forensics.cert.org/cert-forensics-tools-release-el7.rpm && \
-    rm -rf /tmp/*
-
-RUN yum update -y && \
-  yum install -y pam-devel \
-    authd \
+RUN \
+  yum update -y && \
+  dnf install -y \
+    #authd \
+    epel-release \
     gcc-c++ \
     gnupg \
     make \
@@ -35,18 +12,21 @@ RUN yum update -y && \
     python3-pip \
     rsyslog \
     sudo \
-    unixODBC-devel \
     wget \
     which \
     diffutils \
     procps \
     rpm-build \
-    devtoolset-10-gcc \
-    devtoolset-10-gcc-c++ \
-    devtoolset-10-libstdc++-devel \
+    pam-devel \
+    libtool-ltdl \
+    ftp \
+    telnet \
   && \
   yum clean all && \
   rm -rf /var/cache/yum /tmp/*
+
+RUN dnf -y --enablerepo=crb install libtool-ltdl-devel
+RUN dnf -y install jansson
 
 # python 2 and 3 must be installed separately because yum will ignore/discard python2
 RUN \
@@ -55,6 +35,10 @@ RUN \
     python3 \
     python3-devel \
     python3-pip \
+    python3-distro \
+    python3-jsonschema \
+    python3-psutil \
+    python3-requests \
   && \
   yum clean all && \
   rm -rf /var/cache/yum /tmp/*
@@ -70,7 +54,7 @@ RUN rpm --import https://core-dev.irods.org/irods-core-dev-signing-key.asc && \
 COPY rsyslog.conf /etc/rsyslog.conf
 
 #### install basic packages ####
-#RUN yum update -y && yum install -y epel-release
+RUN yum update -y && yum install -y epel-release
 #RUN  yum install -y apt-utils apt-transport-https unixODBC unixODBC-devel wget sudo \
 #                       python python-psutil python-requests python-jsonschema \
 #                       libssl-devel super lsof postgresql odbc-postgresql libjson-perl gnupg \
@@ -79,9 +63,25 @@ COPY rsyslog.conf /etc/rsyslog.conf
 #                       libbz2-devel libxml2-devel zlib1g-devel python-devel \
 #                       make gcc help2man telnet ftp udt
 
-#### Get and install globus repo ####
+#RUN dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+#RUN dnf -y install https://downloads.globus.org/globus-connect-server/stable/installers/repo/rpm/globus-repo-latest.noarch.rpm
 RUN wget -q https://downloads.globus.org/globus-connect-server/stable/installers/repo/rpm/globus-repo-latest.noarch.rpm
 RUN rpm --force -i globus-repo-latest.noarch.rpm
+
+
+RUN mkdir /iRODS_DSI
+RUN chmod 777 /iRODS_DSI
+
+#### Install iRODS ####
+ARG irods_version
+ENV IRODS_VERSION ${irods_version}
+
+#RUN yum install -y irods-server-${irods_version} irods-devel-${irods_version} irods-database-plugin-postgres-${irods_version} irods-runtime-${irods_version} irods-icommands-${irods_version}
+
+RUN yum install -y 'irods-externals*'
+
+#### Install irods-gridftp-client ####
+#RUN yum install -y irods-gridftp-client
 
 #### Install and configure globus specific things ####
 RUN yum install -y globus-gridftp-server-progs \
@@ -95,27 +95,17 @@ RUN yum --disablerepo epel install -y globus-common-devel \
     globus-gridmap-callout-error-devel
 
 
-RUN mkdir /iRODS_DSI
-RUN chmod 777 /iRODS_DSI
-
-#### Install iRODS ####
-ARG irods_version
-ENV IRODS_VERSION ${irods_version}
-
-RUN yum install -y 'irods-externals*'
-RUN yum install -y irods-server-${irods_version} irods-devel-${irods_version} irods-database-plugin-postgres-${irods_version} irods-runtime-${irods_version} irods-icommands-${irods_version}
-
-#### Install irods-gridftp-client ####
-#RUN yum install -y irods-gridftp-client
-
 #### Set up ICAT database. ####
 ADD db_commands.txt /
 RUN yum install -y postgresql-server postgresql-contrib
 RUN su - postgres -c "pg_ctl initdb"
 RUN su - postgres -c "/usr/bin/pg_ctl -D /var/lib/pgsql/data -l logfile start && sleep 1 && psql -f /db_commands.txt"
 
-ADD start.globus.centos7.sh /
-RUN chmod u+x /start.globus.centos7.sh
+RUN dnf config-manager --set-enabled crb
+RUN dnf -y install unixODBC-devel krb5-devel
 
-ENTRYPOINT "/start.globus.centos7.sh"
+ADD start.globus.el9.sh /
+RUN chmod u+x /start.globus.el9.sh
+
+ENTRYPOINT "/start.globus.el9.sh"
 

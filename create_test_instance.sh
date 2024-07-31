@@ -8,11 +8,11 @@ Builds a new docker image with irods installed and configured
 
 Example:
 
-    ./create_test_instance.sh --os_type <arg> --irods-version <arg> ...
+    ./create_test_instance.sh --os-type <arg> --irods-version <arg> ...
 
 Available options:
 
-    --os_type (required)                    The OS type.  One of centos|centos7|ubuntu|ubuntu14|ubuntu16.
+    --os-type (required)                    The OS type.  One of centos|centos7|ubuntu|ubuntu14|ubuntu16.
     --irods-version                        The version of irods - example 4.2.11, 4.3.0, etc.
     -h, --help                              This message
 
@@ -23,7 +23,7 @@ _EOF_
 
 while [ -n "$1" ]; do
     case "$1" in
-        --os_type )
+        --os-type )
             shift
             case "$1" in
                 ubuntu | ubuntu18 )
@@ -31,6 +31,9 @@ while [ -n "$1" ]; do
                     ;;
                 ubuntu20 )
                     image=ubuntu_20_with_irods
+                    ;;
+                ubuntu22 )
+                    image=ubuntu_22_with_irods
                     ;;
                 centos | centos7 )
                     image=centos7_with_irods
@@ -56,7 +59,7 @@ if [ -z "${image}" ]; then
 fi
 
 if [ -z "${irods_version}" ]; then
-    irods_version="4.3.0"
+    irods_version="4.3.2"
 fi
 
 #irods_version_cleaned=`echo $irods_version | sed 's|\([^~]\+\).*|\1|g'`

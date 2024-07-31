@@ -1,33 +1,11 @@
-FROM centos:7
+FROM rockylinux:9
 
-RUN --mount=type=cache,target=/var/cache/yum,sharing=locked \
-    sed -i \
-        -e 's/mirror.centos.org/vault.centos.org/g' \
-        -e 's/^#.*baseurl=http/baseurl=http/g' \
-        -e 's/^mirrorlist=http/#mirrorlist=http/g' \
-        /etc/yum.repos.d/*.repo && \
-    yum update -y || [ "$?" -eq 100 ] && \
-    rm -rf /tmp/*
-
-RUN --mount=type=cache,target=/var/cache/yum,sharing=locked \
-    yum install -y \
-        centos-release-scl \
-        epel-release \
-    && \
-    sed -i \
-        -e 's/mirror.centos.org/vault.centos.org/g' \
-        -e 's/^#.*baseurl=http/baseurl=http/g' \
-        -e 's/^mirrorlist=http/#mirrorlist=http/g' \
-        /etc/yum.repos.d/*.repo 
-
-RUN --mount=type=cache,target=/var/cache/yum,sharing=locked \
-    rpm --import https://www.cert.org/forensics/repository/forensics-expires-2022-04-03.asc && \
-    yum install -y https://forensics.cert.org/cert-forensics-tools-release-el7.rpm && \
-    rm -rf /tmp/*
-
-RUN yum update -y && \
-  yum install -y pam-devel \
-    authd \
+RUN \
+  yum update -y && \
+  yum install -y \
+    pam-devel \
+    python3-jsonschema \
+    epel-release \
     gcc-c++ \
     gnupg \
     make \
@@ -35,18 +13,18 @@ RUN yum update -y && \
     python3-pip \
     rsyslog \
     sudo \
-    unixODBC-devel \
     wget \
     which \
     diffutils \
     procps \
     rpm-build \
-    devtoolset-10-gcc \
-    devtoolset-10-gcc-c++ \
-    devtoolset-10-libstdc++-devel \
   && \
   yum clean all && \
   rm -rf /var/cache/yum /tmp/*
+
+RUN dnf -y install jansson
+RUN rpm --force -i https://dl.rockylinux.org/pub/rocky/9/CRB/x86_64/os/Packages/j/jansson-devel-2.14-1.el9.x86_64.rpm
+RUN dnf -y --enablerepo=crb install libtool-ltdl-devel
 
 # python 2 and 3 must be installed separately because yum will ignore/discard python2
 RUN \
@@ -94,7 +72,6 @@ RUN yum --disablerepo epel install -y globus-common-devel \
     globus-gridftp-server-devel \
     globus-gridmap-callout-error-devel
 
-
 RUN mkdir /iRODS_DSI
 RUN chmod 777 /iRODS_DSI
 
@@ -102,11 +79,15 @@ RUN chmod 777 /iRODS_DSI
 ARG irods_version
 ENV IRODS_VERSION ${irods_version}
 
-RUN yum install -y 'irods-externals*'
 RUN yum install -y irods-server-${irods_version} irods-devel-${irods_version} irods-database-plugin-postgres-${irods_version} irods-runtime-${irods_version} irods-icommands-${irods_version}
+
+RUN yum install -y 'irods-externals*'
 
 #### Install irods-gridftp-client ####
 #RUN yum install -y irods-gridftp-client
+
+RUN dnf config-manager --set-enabled crb
+RUN dnf -y install unixODBC-devel krb5-devel
 
 #### Set up ICAT database. ####
 ADD db_commands.txt /
@@ -114,8 +95,8 @@ RUN yum install -y postgresql-server postgresql-contrib
 RUN su - postgres -c "pg_ctl initdb"
 RUN su - postgres -c "/usr/bin/pg_ctl -D /var/lib/pgsql/data -l logfile start && sleep 1 && psql -f /db_commands.txt"
 
-ADD start.globus.centos7.sh /
-RUN chmod u+x /start.globus.centos7.sh
+ADD start.globus.el9.sh /
+RUN chmod u+x /start.globus.el9.sh
 
-ENTRYPOINT "/start.globus.centos7.sh"
+ENTRYPOINT "/start.globus.el9.sh"
 

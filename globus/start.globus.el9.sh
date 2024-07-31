@@ -1,27 +1,34 @@
 #! /bin/bash
 
 # Start the Postgres database.
-service postgresql start
+if [ ! -d /run/postgresql ]; then
+
+    mkdir /run/postgresql
+    chown postgres:postgres /run/postgresql
+fi
+
+# Start the Postgres database.
+su - postgres -c 'pg_ctl start'
 counter=0
-until pg_isready -q
-do
-    sleep 1
-    ((counter += 1))
+until su - postgres -c "psql ICAT -c '\d'"; do
+   sleep 1
+   ((counter += 1))
 done
+
 echo Postgres took approximately $counter seconds to fully start ...
 
 #### Set up iRODS ####
-irods_version=`apt show irods-server 2>/dev/null | grep Version`
-if [[ $irods_version == "Version: 4.3"* ]]; then
+#irods_version=`rpm -qa irods-server`
+#if [[ $irods_version == "irods-server-4.3"* ]]; then
     python3 /var/lib/irods/scripts/setup_irods.py < /var/lib/irods/packaging/localhost_setup_postgres.input
-else
-    python /var/lib/irods/scripts/setup_irods.py < /var/lib/irods/packaging/localhost_setup_postgres.input
-fi
+#else
+#    python /var/lib/irods/scripts/setup_irods.py < /var/lib/irods/packaging/localhost_setup_postgres.input
+#fi
+#
+##### Start iRODS ####
+su - irods -c '/var/lib/irods/irodsctl start'
 
-#### Start iRODS ####
-service irods start
-
-#### Create user1 in iRODS ####
+##### Create user1 in iRODS ####
 sudo -H -u irods bash -c "iadmin mkuser user1 rodsuser"
 sudo -H -u irods bash -c "iadmin moduser user1 password user1"
 
@@ -32,6 +39,9 @@ rods
 tempZone
 rods' | iinit
 
+#### Create resc1 and resc2 resources in iRODS ####
+admin mkresc resc1 unixfilesystem `hostname`:/tmp/resc1
+admin mkresc resc2 unixfilesystem `hostname`:/tmp/resc2
 
 #### configure globus certs ####
 # the folowing seems to be automatic now

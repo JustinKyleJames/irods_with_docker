@@ -11,21 +11,21 @@ done
 echo Postgres took approximately $counter seconds to fully start ...
 
 #### Set up iRODS ####
-irods_version=`apt show irods-server 2>/dev/null | grep Version`
-if [[ $irods_version == "Version: 4.3"* ]]; then
+#irods_version=`apt show irods-server 2>/dev/null | grep Version`
+#if [[ $irods_version == "Version: 4.3"* ]]; then
     python3 /var/lib/irods/scripts/setup_irods.py < /var/lib/irods/packaging/localhost_setup_postgres.input
-else
-    python /var/lib/irods/scripts/setup_irods.py < /var/lib/irods/packaging/localhost_setup_postgres.input
-fi
-
-#### Start iRODS ####
+#else
+#    python /var/lib/irods/scripts/setup_irods.py < /var/lib/irods/packaging/localhost_setup_postgres.input
+#fi
+#
+##### Start iRODS ####
 service irods start
-
-#### Create user1 in iRODS ####
+#
+##### Create user1 in iRODS ####
 sudo -H -u irods bash -c "iadmin mkuser user1 rodsuser"
 sudo -H -u irods bash -c "iadmin moduser user1 password user1"
-
-#### Give root an environment to connect to iRODS ####
+#
+##### Give root an environment to connect to iRODS ####
 echo 'localhost
 1247
 rods

@@ -2,18 +2,18 @@
 
 usage() {
 cat <<_EOF_
-Usage: ./create+test_instance_globus.sh [OPTIONS]...
+Usage: ./create_test_instance_globus.sh [OPTIONS]...
 
-Builds a new docker image with globus installed and configured
+Creates a docker instance with globus installed and configured
 
 Example:
 
-    ./create_test_instance_globus.sh --os_type <arg> --irods-version <arg> ...
+    ./create_test_instance_globus.sh --os-type <arg> --irods-version <arg> ...
 
 Available options:
 
-    --os_type (required)                    The OS type.  One of centos|centos7|ubuntu|ubuntu18|ubuntu28|alma|alma8|almalinux8
-    -- irods-version                        The version of irods - example 4.2.11, 4.3, etc.
+    --os-type (required)                    The OS type.  One of centos|centos7|ubuntu|ubuntu18|ubuntu20|ubuntu22|alma|alma8|almalinux8|debian11|debian12|el9
+    --irods-version                         The version of irods - example 4.2.11, 4.3, etc.
     -h, --help                              This message
 
 _EOF_
@@ -23,7 +23,7 @@ _EOF_
 
 while [ -n "$1" ]; do
     case "$1" in
-        --os_type )
+        --os-type )
             shift
             case "$1" in
                 ubuntu | ubuntu18 )
@@ -32,14 +32,23 @@ while [ -n "$1" ]; do
                 ubuntu20 )
                     image=ubuntu_20_with_globus_irods
                     ;;
+                ubuntu22 )
+                    image=ubuntu_22_with_globus_irods
+                    ;;
                 debian11 )
                     image=debian_11_with_globus_irods
+                    ;;
+                debian12 )
+                    image=debian_12_with_globus_irods
                     ;;
                 centos | centos7 )
                     image=centos7_with_globus_irods
                     ;;
                 alma | alma8 | almalinux8 )
                     image=almalinux8_with_globus_irods
+                    ;;
+                el9 )
+                    image=el9_with_globus_irods
                     ;;
                 * )
                     usage

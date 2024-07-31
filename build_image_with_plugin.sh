@@ -8,11 +8,11 @@ Builds a new docker image with a plugin installed
 
 Example:
 
-    ./build_image_with_plugin.sh --os_type <arg> --plugin-repo <arg> --plugin-branch <arg> ...
+    ./build_image_with_plugin.sh --os-type <arg> --plugin-repo <arg> --plugin-branch <arg> ...
 
 Available options:
 
-    --os_type (required)                    The OS type.  One of centos|centos7|ubuntu|ubuntu14|ubuntu16.
+    --os-type (required)                    The OS type.  One of centos|centos7|ubuntu|ubuntu14|ubuntu16.
     --plugin-repo                           Repo for the iRODS plugin 
     --plugin-branch (requires plugin-repo)  Branch for the iRODS plugin 
     -h, --help                              This message
@@ -24,7 +24,7 @@ _EOF_
 
 while [ -n "$1" ]; do
     case "$1" in
-        --os_type )
+        --os-type )
             shift
             case "$1" in
                 ubuntu | ubuntu16 )
