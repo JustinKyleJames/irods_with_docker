@@ -1,8 +1,5 @@
 FROM debian:11
 
-ADD start.globus.debian11.sh /
-RUN chmod u+x /start.globus.debian11.sh
-
 ARG DEBIAN_FRONTEND=noninteractive
 ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=true
 
@@ -63,6 +60,9 @@ RUN apt-get install -y 'irods-externals*'
 #### Set up ICAT database. ####
 ADD db_commands.txt /
 RUN service postgresql start && su - postgres -c 'psql -f /db_commands.txt'
+
+ADD start.globus.debian11.sh /
+RUN chmod u+x /start.globus.debian11.sh
 
 ENTRYPOINT "/start.globus.debian11.sh"
 

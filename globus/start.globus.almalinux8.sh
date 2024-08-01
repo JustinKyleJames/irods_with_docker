@@ -39,6 +39,8 @@ rods
 tempZone
 rods' | iinit
 
+iadmin mkresc resc1 unixfilesystem `hostname`:/tmp/resc1
+iadmin mkresc resc2 unixfilesystem `hostname`:/tmp/resc2
 
 #### configure globus certs ####
 # the folowing seems to be automatic now

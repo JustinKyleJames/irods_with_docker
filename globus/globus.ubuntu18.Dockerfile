@@ -1,8 +1,5 @@
 FROM ubuntu:18.04
 
-ADD start.globus.ubuntu18.sh /
-RUN chmod u+x /start.globus.ubuntu18.sh
-
 ARG DEBIAN_FRONTEND=noninteractive
 ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=true
 
@@ -62,5 +59,7 @@ RUN apt-get install -y 'irods-externals*'
 ADD db_commands.txt /
 RUN service postgresql start && su - postgres -c 'psql -f /db_commands.txt'
 
-ENTRYPOINT "/start.globus.ubuntu18.sh"
+ADD start.globus.ubuntu18.sh /
+RUN chmod u+x /start.globus.ubuntu18.sh
 
+ENTRYPOINT "/start.globus.ubuntu18.sh"
